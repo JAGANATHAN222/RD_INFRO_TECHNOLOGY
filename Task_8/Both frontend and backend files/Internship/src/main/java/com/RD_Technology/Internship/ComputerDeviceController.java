@@ -1,0 +1,77 @@
+package com.RD_Technology.Internship;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/computers")
+public class ComputerDeviceController {
+
+    private static final Logger log = LoggerFactory.getLogger(ComputerDeviceController.class);
+
+    private final ComputerDeviceService service;
+
+    public ComputerDeviceController(ComputerDeviceService service) {
+        this.service = service;
+    }
+
+    @PostMapping
+    public ResponseEntity<ComputerDevice> create(@RequestBody ComputerDevice device) {
+        log.info("POST /api/computers serialNo={}", device != null ? device.getSerialNo() : null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.addDevice(device));
+    }
+
+    @GetMapping
+    public List<ComputerDevice> getAll() {
+        log.debug("GET /api/computers");
+        return service.getAllDevices();
+    }
+
+    @GetMapping("/{serialNo}")
+    public ResponseEntity<ComputerDevice> getById(@PathVariable Integer serialNo) {
+        log.debug("GET /api/computers/{}", serialNo);
+        ComputerDevice device = service.getDeviceBySerialNo(serialNo);
+        if (device == null) {
+            log.warn("Computer device not found serialNo={}", serialNo);
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(device);
+    }
+
+    @PutMapping("/{serialNo}")
+    public ResponseEntity<ComputerDevice> update(@PathVariable Integer serialNo, @RequestBody ComputerDevice updated) {
+        log.info("PUT /api/computers/{}", serialNo);
+        ComputerDevice device = service.updateDevice(serialNo, updated);
+        if (device == null) {
+            log.warn("Computer device not found for update serialNo={}", serialNo);
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(device);
+    }
+
+    @DeleteMapping("/{serialNo}")
+    public ResponseEntity<Void> delete(@PathVariable Integer serialNo) {
+        log.info("DELETE /api/computers/{}", serialNo);
+        boolean deleted = service.deleteDevice(serialNo);
+        if (!deleted) {
+            log.warn("Computer device not found for delete serialNo={}", serialNo);
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
+    }
+}
+
