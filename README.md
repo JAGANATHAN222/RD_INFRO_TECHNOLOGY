@@ -128,7 +128,7 @@ Across these tasks, the main **Java and full‑stack concepts** covered include:
 
 - **Name**: *Your Name*  
 - **Role**: Java Developer Intern – RD INFRO TECHNOLOGY  
-- **GitHub**: `https://github.com/<your-username>`
+- **GitHub**: `https://github.com/JAGANATHAN222`
 
 ---
 
